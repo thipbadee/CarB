@@ -1,0 +1,27 @@
+@startuml Get all bookings (GET ALL)
+
+header Get All bookings diagram
+footer Page %page% of %lastpage%
+title "Get all bookings (GET ALL)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:bookings" as routerbookings
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:bookings" as controllersbookings
+participant "<<model>>\n:booking" as modelbooking
+database "<<MongoDB>>\n:bookings" as bookingsDatabase
+
+client->server ++:req.get('/bookings')
+server->routerbookings ++:app.use('/bookings',bookings)
+routerbookings->middlewareAuth ++: protect()
+middlewareAuth->routerbookings --: protected
+middlewareAuth ->> client --: unprotected
+routerbookings -> controllersbookings ++:getBookings()
+controllersbookings->modelbooking ++:find()
+modelbooking ->bookingsDatabase ++: bookingSchema
+bookingsDatabase --> modelbooking --: bookings
+controllersbookings <-- modelbooking --:bookings
+controllersbookings->client --:response
+
+@enduml

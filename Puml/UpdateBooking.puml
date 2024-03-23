@@ -1,0 +1,27 @@
+@startuml UpdateBooking (PUT)
+
+header Update Booking sequence diagram
+footer Page %page% of %lastpage%
+title "UpdateBooking (PUT)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:Bookings" as routerBookings
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:Bookings" as controllersBookings
+participant "<<model>>\n:Booking" as modelBooking
+database "<<MongoDB>>\n:Bookings" as BookingsDatabase
+
+client->server ++:req.put('/Bookings/:id')
+server->routerBookings ++:app.use('/Bookings',Bookings)
+routerBookings->middlewareAuth ++: protect(), authorize('admin', 'user')
+middlewareAuth->routerBookings --: Authorized and protected
+middlewareAuth ->> client --: Unauthorized or unprotected
+routerBookings -> controllersBookings ++:updateBooking()
+controllersBookings->modelBooking ++:findByIdAndUpdate(req.params.id, req.body)
+modelBooking ->BookingsDatabase ++: BookingSchema
+BookingsDatabase --> modelBooking --: Booking
+controllersBookings <-- modelBooking --:Booking
+controllersBookings->client --:response
+
+@enduml

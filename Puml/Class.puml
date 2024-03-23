@@ -1,0 +1,94 @@
+@startuml CarBService
+left to right direction
+package "CarB"{
+    class "<<Application>>\nCarBService" as CarBService{}
+
+    class "<<Resource>>\nCars" as ResourceCars{
+        <<GET>> +getCars():Car
+        <<POST>> +createCar():Car
+    }
+
+    class "<<Resource>>\nCar" as ResourceCar {
+        <<GET>> +getCar(): Car
+        <<PUT>> +updateCar(): Car
+        <<DELETE>> +deleteCar(): void
+    }
+
+    class "<<Representation>>\nCar" as RepresentationCar {
+        -brand
+        -carModel
+        -type
+        -pricePerDay
+        -licensePlate
+        -address
+        -district
+        -province
+        -postalCode
+        -googleMapsURL
+        -imageURL
+        -tel
+    }
+
+   
+
+    class "<<Resource>>\nBookings" as ResourceBookings{
+        <<GET>> +getBookings():Booking
+        <<POST>> +addBooking():Booking
+    }
+
+    class "<<Resource>>\nBooking" as ResourceBooking {
+        <<GET>> +getBooking(): Booking
+        <<PUT>> +updateBooking(): Booking
+        <<DELETE>> +deleteBooking(): void
+    }
+
+    class "<<Representation>>\nBooking" as RepresentationBooking {
+        -bookingDate
+        -user
+        -car
+        -createdAt
+    }
+
+    class "<<Resource>>\nAuth" as ResourceAuth{
+        <<POST>> +register():Token
+        <<POST>> +login():Token
+        <<GET>> +logout():void
+        <<POST>> +getMe():User
+    }
+
+    class "<<Resource>>\nAuthMiddleware" as ResourceAuthMiddleware{
+        protect()
+        authorize(roles)
+        verifyToken()
+    }
+
+    class "<<Representation>>\nUser" as RepresentationUser {
+        -name
+        -tel
+        -email
+        -role
+        -password
+        -createdAt
+    }
+    
+
+
+
+
+
+}
+
+CarBService ..> ResourceCars:"/cars\n<<Path>>"
+ResourceCars ..> ResourceCar: "/{carId}\n<<Path>>"
+ResourceCar ..> RepresentationCar: "<<use>>"
+ResourceCar ..> ResourceBookings:"/bookings\n<<Path>>"
+
+CarBService ..> ResourceBookings:"/bookings\n<<Path>>"
+ResourceBookings ..> ResourceBooking: "/{bookingId}\n<<Path>>"
+ResourceBooking ..> RepresentationBooking: "<<use>>"
+
+CarBService ..> ResourceAuth:"/auth\n<<Path>>"
+ResourceAuth ..> ResourceAuthMiddleware:"<<verify user>>"
+ResourceAuthMiddleware ..> RepresentationUser:"<<use>>"
+
+@enduml

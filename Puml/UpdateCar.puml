@@ -1,0 +1,27 @@
+@startuml UpdateCar (PUT)
+
+header Update Car sequence diagram
+footer Page %page% of %lastpage%
+title "UpdateCar (PUT)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:cars" as routerCars
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:cars" as controllersCars
+participant "<<model>>\n:Car" as modelCar
+database "<<MongoDB>>\n:cars" as CarsDatabase
+
+client->server ++:req.put('/cars/:id')
+server->routerCars ++:app.use('/cars',Cars)
+routerCars->middlewareAuth ++: protect(), authorize('admin')
+middlewareAuth->routerCars --: Authorized and protected
+middlewareAuth ->> client --: Unauthorized or unprotected
+routerCars -> controllersCars ++:updateCar()
+controllersCars->modelCar ++:findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+modelCar ->CarsDatabase ++: CarSchema
+CarsDatabase --> modelCar --: car
+controllersCars <-- modelCar --:car
+controllersCars->client --:response
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml Get all cars (GET ALL)
+
+header Get All cars diagram
+footer Page %page% of %lastpage%
+title "Get all cars (GET ALL)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:cars" as routercars
+participant "<<controllers>>\n:cars" as controllerscars
+participant "<<model>>\n:car" as modelcar
+database "<<MongoDB>>\n:cars" as carsDatabase
+
+client->server ++:req.get('/cars')
+server->routercars ++:app.use('/cars',cars)
+routercars -> controllerscars ++:getCars()
+controllerscars->modelcar ++:find()
+modelcar ->carsDatabase ++: carSchema
+carsDatabase --> modelcar --: cars
+controllerscars <-- modelcar --:cars
+controllerscars->client --:response
+
+@enduml

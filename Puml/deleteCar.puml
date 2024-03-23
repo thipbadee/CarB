@@ -1,0 +1,33 @@
+@startuml Delete Car (DELETE)
+
+header Delete Car diagram
+footer Page %page% of %lastpage%
+title "Delete Car (DELETE)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:cars" as routercars
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:cars" as controllerscars
+participant "<<model>>\n:car" as modelcar
+participant "<<models>>\n:Booking" as bookingModel
+database "<<MongoDB>>\n:bookings" as bookingDatabase
+database "<<MongoDB>>\n:cars" as carsDatabase
+
+client->server ++:req.delete('/cars/:id')
+server->routercars ++:app.use('/cars',cars)
+routercars->middlewareAuth ++:protect(), authorize('admin')
+middlewareAuth->routercars --: Authorized and protected
+middlewareAuth ->> client --: Unauthorized or unprotected
+routercars -> controllerscars ++: deleteCar()
+controllerscars -> modelcar ++: findById(req.params.id)
+modelcar -> bookingModel ++: deleteMany({ car: this.id })
+bookingModel -> bookingDatabase ++: bookingSchema
+bookingModel <-- bookingDatabase --: null
+modelcar <-- bookingModel --: null
+modelcar -> carsDatabase ++: carSchema
+carsDatabase --> modelcar --: null
+modelcar --> controllerscars --: null
+client <- controllerscars --: response
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml VacQ System Use Case Diagram
+left to right direction
+
+rectangle "CarB System" as CarBSystem { 
+    
+    usecase "Get All Cars" as getCars
+    usecase "Get Single Cars" as getCar
+    usecase "Create New Car" as createCar
+    usecase "Update Car" as updateCar
+    usecase "Delete Car" as deleteCar
+
+    usecase "Get All Bookings" as getBookings
+    usecase "Get Single Bookings" as getBooking
+    usecase "Add New Booking" as addBooking
+    usecase "Update Booking" as updateBooking
+    usecase "Delete Booking" as deleteBooking
+}
+
+actor "User" as user
+user -- getCars
+user -- getCar
+user -- getBookings
+user -- getBooking
+user -- addBooking
+user -- updateBooking
+user -- deleteBooking
+
+actor "Non-User" as non_user
+non_user -- getCars
+non_user -- getCar
+
+actor "Admin" as admin
+getCars -- admin
+getCar -- admin
+createCar -- admin
+updateCar -- admin
+deleteCar -- admin
+getBookings -- admin
+getBooking -- admin
+addBooking -- admin
+updateBooking -- admin
+deleteBooking -- admin
+
+@enduml

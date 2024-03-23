@@ -1,0 +1,27 @@
+@startuml Post Car (POST)
+
+header Post Car diagram
+footer Page %page% of %lastpage%
+title "Post Car (POST)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:cars" as routercars
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:cars" as controllerscars
+participant "<<model>>\n:car" as modelcar
+database "<<MongoDB>>\n:cars" as carsDatabase
+
+client->server ++:req.post('/cars')
+server->routercars ++:app.use('/cars',cars)
+routercars->middlewareAuth ++: protect(), authorize('admin')
+middlewareAuth->routercars --: Authorized and protected
+middlewareAuth ->> client --: Unauthorized or unprotected
+routercars -> controllerscars ++:createCar()
+controllerscars->modelcar ++:create(req.body)
+modelcar ->carsDatabase ++: carSchema
+carsDatabase --> modelcar --: car
+controllerscars <-- modelcar --:car
+controllerscars->client --:response
+
+@enduml

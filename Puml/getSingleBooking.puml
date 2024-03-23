@@ -1,0 +1,27 @@
+@startuml Get Single booking (GET Single)
+
+header Get Single booking diagram
+footer Page %page% of %lastpage%
+title "Get Single booking (GET Single)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:bookings" as routerbookings
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:bookings" as controllersbookings
+participant "<<model>>\n:booking" as modelbooking
+database "<<MongoDB>>\n:bookings" as bookingsDatabase
+
+client->server ++:req.get('/bookings/:id')
+server->routerbookings ++:app.use('/bookings',bookings)
+routerbookings->middlewareAuth ++: protect()
+middlewareAuth->routerbookings --: protected
+middlewareAuth ->> client --: unprotected
+routerbookings -> controllersbookings ++:getBooking()
+controllersbookings->modelbooking ++:findById(req.params.id)
+modelbooking ->bookingsDatabase ++: bookingSchema
+bookingsDatabase --> modelbooking --: booking
+controllersbookings <-- modelbooking --:booking
+controllersbookings->client --:response
+
+@enduml
