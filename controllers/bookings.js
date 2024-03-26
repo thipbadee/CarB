@@ -10,19 +10,19 @@ exports.getBookings = async (req, res, next) => {
     if(req.user.role !== 'admin') {
         query = Booking.find({user: req.user.id}).populate({
             path: 'car',
-            select: 'brand carModel type licensePlate googleMapsURL tel'
+            select: 'brand carModel type pricePerDay licensePlate address district province postalCode googleMapsURL imageURL tel'
         });
     } else { //If you are an admin, you can see all!
         if(req.params.carId) {
             // console.log(req.params.CarId);
             query = Booking.find({car: req.params.carId}).populate({
                 path: 'car',
-                select: 'brand carModel type licensePlate googleMapsURL tel'
+                select: 'brand carModel type pricePerDay licensePlate address district province postalCode googleMapsURL imageURL tel'
             });
         } else {
             query = Booking.find().populate({
                 path: 'car',
-                select: 'brand carModel type licensePlate googleMapsURL tel'
+                select: 'brand carModel type pricePerDay licensePlate address district province postalCode googleMapsURL imageURL tel'
             });
         }
     }
@@ -43,7 +43,7 @@ exports.getBooking = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id).populate({
             path: 'car',
-            select: 'brand carModel type licensePlate googleMapsURL tel'
+            select: 'brand carModel type pricePerDay licensePlate address district province postalCode googleMapsURL imageURL tel'
         });
 
         if(!booking) {

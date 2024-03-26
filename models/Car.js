@@ -47,7 +47,7 @@ const CarSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a province.']
     },
-    postalcode: {
+    postalCode: {
         type: String,
         required: [true, 'Please add a postalcode.'],
         maxlength: [5,'Postal Code cannot be more than 5 digits.']
