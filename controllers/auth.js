@@ -37,7 +37,7 @@ exports.register = async (req,res,next)=> {
             password,
             role
         });
-
+        console.log('request body',req.body);
         //create token
         // const token = user.getSignedJwtToken();
         // res.status(200).json({success:true,token});
